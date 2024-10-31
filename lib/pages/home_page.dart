@@ -16,6 +16,7 @@ class _HomePageState extends State<HomePage> {
 
   double _imcResult = 0.0;
   String _imcClassification = '';
+  final List<Map<String, dynamic>> _imcResultList = [];
 
 
   @override
@@ -82,8 +83,12 @@ class _HomePageState extends State<HomePage> {
       setState(() {
         _imcResult = imcCalculator.calculatorIMC(weight, height);
         _imcClassification = imcCalculator.classifierIMC(weight, height);
-      });
 
+        _imcResultList.add({
+          'result': _imcResult.toStringAsFixed(2),
+          'classification': _imcClassification
+        });
+      });
       _showResultDialog();
     } else {
       _showErrorDialog();
@@ -137,7 +142,40 @@ class _HomePageState extends State<HomePage> {
               onPressed: _calculateIMC, // Chama o método de cálculo
               child: const Text("Calculate")
             ),
-          )
+          ),
+
+          const SizedBox(height: 30,),
+
+          Expanded(
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: _imcResultList.length,
+              itemBuilder: (context, index){
+                final item = _imcResultList[index];
+                return Container(
+                  width: 200,
+                  margin: const EdgeInsets.symmetric(horizontal: 8.0),
+                  padding: const EdgeInsets.all(16.0),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: Colors.lightBlueAccent,
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'IMC: ${item['result']}',
+                        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        'Classification: ${item['classification']}',
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                    ],
+                  ),
+                );
+              }))
         ],
       ),
     );
